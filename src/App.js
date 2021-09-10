@@ -1,20 +1,24 @@
-import logo from './logos/love_race_img.jpg';
+import logo from './logos/logo.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faPlayCircle} from "@fortawesome/free-solid-svg-icons"
+import {faPauseCircle} from "@fortawesome/free-solid-svg-icons"
 import {songs} from "./appl";
 import './App.css';
 
 
 var keySong;
 var enable=false;
+var enablePause=false;
 var music = document.createElement("audio");
 var audio = document.createElement("source");
 
 const nameStyle = {color: 'black'};
-function song(id,url){
+function song(id,url,url2){
   var tds = document.getElementsByClassName("rr");
   keySong=id;
-  enable=true;
+  if(enable===false){
+    enable=true;
+  
   for(var i = 0; i < tds.length; i++) {
      tds[i].style.color="black";
   }
@@ -22,7 +26,15 @@ function song(id,url){
   document.getElementById(id).style.color='blue';
 
   music = song_aux(url);
- // console.log(document.getElementById('name').);
+
+  }else{
+    for(var i2 = 0; i2 < tds.length; i2++) {
+      tds[i2].style.color="black";
+      
+   }music.src=url;
+   document.getElementById(id).style.color='blue';
+  }
+  document.getElementById('img-album').setAttribute('src',url2); 
   
 };
 
@@ -30,21 +42,36 @@ function song(id,url){
 function botonReproducir(){
   if(enable===false){
     alert("Seleccione la canción")
-  }else{
+  }else if(enablePause===true){
+    enablePause=false;
+    music.play();
+  }
+  
+  else{
+    music.pause();
+    music.currentTime = 0;
     console.log(music);
-    music.play()
+    music.play();
   };
 };  
+
+function btnPause(){
+  if(enable===false){
+    alert("Seleccione la canción")
+  }else{
+    enablePause=true;
+    music.pause();
+    
+  };
+}; 
 function Letra(){
   if(enable===false){
     alert("Seleccione la canción")
   }else{
 
-    const lyric= document.createElement("p");
-  
-    lyric.textContent=songs[keySong].lyrics;
     console.log();
-    document.getElementById("lyricT").appendChild(lyric);
+    document.getElementById("lyricT").textContent=songs[keySong].lyrics;
+
     //document.getElementById("col-re2").textContent=songs[keySong].lyrics;
   }
   
@@ -106,6 +133,7 @@ function App() {
               <div class="col-re2">
                 <p id="window">
                 <button class="player" onClick={(e) => botonReproducir()}  id="btnReproducir"><FontAwesomeIcon icon={faPlayCircle}/></button>
+                <button class="pause" onClick={(e) => btnPause()}  id="btnPause"><FontAwesomeIcon icon={faPauseCircle}/></button>
                 <button class="lyric" onClick={(e) => Letra()}  id="btnLyric">Lyric</button>
                 </p>
               </div>
@@ -120,7 +148,7 @@ function App() {
                     
                       <tr id="songs" >
                         
-                        <td style={nameStyle} className='rr' id={key} onClick={(e) => song(key,data.song)}>{data.nombre }</td>
+                        <td style={nameStyle} className='rr' id={key} onClick={(e) => song(key,data.song,data.image)}>{data.nombre }</td>
                         
                         <td  >{data.artist}</td>
                       </tr>
