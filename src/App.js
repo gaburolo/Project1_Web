@@ -2,25 +2,25 @@ import logo from './logos/logo.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faPlayCircle} from "@fortawesome/free-solid-svg-icons"
 import {faPauseCircle} from "@fortawesome/free-solid-svg-icons"
-import {songs} from "./appl";
+import {songs} from "./songs"
 import './App.css';
 
 
 var keySong;
 var enable=false;
 var enablePause=false;
-var music = document.createElement("audio");
-var audio = document.createElement("source");
+var music = document.createElement('audio');
+var audio = document.createElement('source');
 
 const nameStyle = {color: 'black'};
 function song(id,url,url2){
-  var tds = document.getElementsByClassName("rr");
+  var tds = document.getElementsByClassName('rr');
   keySong=id;
   if(enable===false){
     enable=true;
   
   for(var i = 0; i < tds.length; i++) {
-     tds[i].style.color="black";
+     tds[i].style.color='black';
   }
   
   document.getElementById(id).style.color='blue';
@@ -34,12 +34,13 @@ function song(id,url,url2){
    }music.src=url;
    document.getElementById(id).style.color='blue';
   }
-  document.getElementById('img-album').setAttribute('src',url2); 
+  document.getElementById('img-album').setAttribute('src',url2);
+  document.getElementById("lyricT").textContent="Lyrics";
   
 };
 
 
-function botonReproducir(){
+function btnPlay(){
   if(enable===false){
     alert("Seleccione la canción")
   }else if(enablePause===true){
@@ -64,7 +65,7 @@ function btnPause(){
     
   };
 }; 
-function Letra(){
+function btnLyric(){
   if(enable===false){
     alert("Seleccione la canción")
   }else{
@@ -77,7 +78,7 @@ function Letra(){
   
 
 };   
-// El sonido que podemos reproducir o pausar
+
 
 
 function song_aux(url){
@@ -132,9 +133,9 @@ function App() {
               </div> 
               <div class="col-re2">
                 <p id="window">
-                <button class="player" onClick={(e) => botonReproducir()}  id="btnReproducir"><FontAwesomeIcon icon={faPlayCircle}/></button>
+                <button class="player" onClick={(e) => btnPlay()}  id="btnReproducir"><FontAwesomeIcon icon={faPlayCircle}/></button>
                 <button class="pause" onClick={(e) => btnPause()}  id="btnPause"><FontAwesomeIcon icon={faPauseCircle}/></button>
-                <button class="lyric" onClick={(e) => Letra()}  id="btnLyric">Lyric</button>
+                <button class="lyric" onClick={(e) => btnLyric()}  id="btnLyric">Lyric</button>
                 </p>
               </div>
               <div scr="stock-container" >
