@@ -55,12 +55,29 @@ app.post('/upload',uploadStrategy,(req,res) =>{
             console.log(err);
             return;
         }
-        res.status(200).send('Archivo subido');
+
+        res.status(200).send('Archivo subido'+`"https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${blobName}"`);
     });
 
 });
 
 app.get('/all',(req,res) =>{
+    blobService.listBlobsSegmented(containerName, null, (err,data)=>{
+        if(err){
+            console.log(err);
+            return;
+        }else{
+            let images = '';
+            if(data.entries.length){
+                
+                data.entries.forEach(element =>{
+                    images += `<img src="https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${element.name}" witdh="400"/>`
+                });
+                res.send(images);
+            }
+        }
+    });
+
 
 });
 const port = process.env.port || 3030;
