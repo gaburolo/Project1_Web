@@ -23,20 +23,21 @@ function bufferToStream(binary) {
     });
 
     return readableInstanceStream;
-}
+};
 
 app.use(express.json());
-//app.get('/',(req,res) =>{});
+
 app.use(express.static(path.join(__dirname,'public')));
 const multer = require('multer');
 const inMemoryStorage = multer.memoryStorage();
 const uploadStrategy = multer({storage:inMemoryStorage}).single('image');
-
+const uploadStrategy2 = multer({storage:inMemoryStorage}).single('audio');
+const uploadStrategy3 = multer({storage:inMemoryStorage}).single('lyric');
 const config = require('./config');
 
 const azureStorage = require('azure-storage');
-const blobService = azureStorage.createBlobService();
-const containerName = 'archivo';
+const blobService = azureStorage.createBlobService(); 
+var containerName = 'archivo';
 
 
 
@@ -45,23 +46,63 @@ const getBlobName = originalName =>{
     return `${indetifier}=${originalName}`;
 };
 
-app.post('/upload',uploadStrategy,(req,res) =>{
+app.post('/upload/image',uploadStrategy,(req,res) =>{
     const blobName = getBlobName(req.file.originalname);
     const stream = bufferToStream(req.file.buffer);
     const streamLength = req.file.buffer.length;
-
+    containerName = 'archivo';
     blobService.createBlockBlobFromStream(containerName, blobName, stream, streamLength, err=>{
         if(err){
             console.log(err);
             return;
         }
-
-        res.status(200).send('Archivo subido'+`"https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${blobName}"`);
+        console.log('Archivo subido'+`"https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${blobName}"`);
+        //res.status(200).send('Archivo subido'+`"https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${blobName}"`);
     });
 
 });
 
+
+
+
+app.post('/upload/audio',uploadStrategy2,(req,res) =>{
+    const blobName = getBlobName(req.file.originalname);
+    const stream = bufferToStream(req.file.buffer);
+    const streamLength = req.file.buffer.length;
+    containerName='audio';
+    blobService.createBlockBlobFromStream(containerName, blobName, stream, streamLength, err=>{
+        if(err){
+            console.log(err);
+            return;
+        }
+        console.log('Archivo subido'+`"https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${blobName}"`);
+        //res.status(200).send('Archivo subido'+`"https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${blobName}"`);
+    });
+
+});
+
+app.post('/upload/lyric',uploadStrategy3,(req,res) =>{
+    const blobName = getBlobName(req.file.originalname);
+    const stream = bufferToStream(req.file.buffer);
+    const streamLength = req.file.buffer.length;
+    containerName='letra';
+    blobService.createBlockBlobFromStream(containerName, blobName, stream, streamLength, err=>{
+        if(err){
+            console.log(err);
+            return;
+        }
+        console.log('Archivo subido'+`"https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${blobName}"`);
+        //res.status(200).send('Archivo subido'+`"https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${blobName}"`);
+    });
+
+});
+
+
+
+
+
 app.get('/all',(req,res) =>{
+    containerName='letra'
     blobService.listBlobsSegmented(containerName, null, (err,data)=>{
         if(err){
             console.log(err);
@@ -71,7 +112,7 @@ app.get('/all',(req,res) =>{
             if(data.entries.length){
                 
                 data.entries.forEach(element =>{
-                    images += `<img src="https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${element.name}" witdh="400"/>`
+                    images += `<iframe src="https://${config.getStorageAccountName()}.blob.core.windows.net/${containerName}/${element.name}" />`
                 });
                 res.send(images);
             }
