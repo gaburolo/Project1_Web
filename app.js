@@ -2,6 +2,9 @@ if(process.env.NODE_ENV != 'production'){
     require('dotenv').config();
 }
 
+app.use(express.json());
+
+app.use(express.static(path.join(__dirname,'public')));
 const express = require('express');
 const path = require('path');
 
@@ -25,9 +28,6 @@ function bufferToStream(binary) {
     return readableInstanceStream;
 };
 
-app.use(express.json());
-
-app.use(express.static(path.join(__dirname,'public')));
 const multer = require('multer');
 const inMemoryStorage = multer.memoryStorage();
 const uploadStrategy = multer({storage:inMemoryStorage}).single('image');
